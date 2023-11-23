@@ -356,4 +356,158 @@ Enemy.hit(boss, 50)
 print("grunt health: " .. grunt.health)
 print("boss health: " .. boss.health)
 
--- The : operators
+-- The : operator
+-- these essentially allow you to call methods
+-- on an object instead of it's class
+-- it is syntactic sugar, but pretty awesome
+Vector = {
+    x = 0,
+    y = 1,
+    z = 0
+}
+
+Vector.new = function(self, object)
+    object = object or {}
+    setmetatable(object, self)
+    self.__index = self
+    return object
+end
+
+Vector.print = function(self)
+    print("x:" .. self.x .. ", y:" .. self.y .. ", z:" .. self.z)
+end
+
+velocity = Vector:new() -- takes
+momentum = Vector:new({ x = 20, z = 10 })
+
+Vector.print(velocity)
+Vector.print(momentum)
+
+-- invoking like methods
+-- dont have to pass in instance to the parent table to call it
+-- auto passes in self
+velocity:print()
+momentum:print()
+
+-- easier way to create these instances
+grunt = Enemy:new()
+boss = Enemy:new({ health = 500, defense = 100 })
+
+-- easier way to invoke methods
+boss:hit(50)
+grunt:hit(55)
+
+
+-- tables inside of objects
+Character = {
+    alive = true
+}
+
+Character.position = {
+    x = 10, y = 20, z = 30
+}
+
+Character.new = function(self, object)
+    object = object or {}
+    setmetatable(object, self)
+    self.__index = self
+    return object
+end
+
+player1 = Character:new()
+player2 = Character:new()
+
+player1.position.x = 0
+player2.position.y = 10
+
+print(player1.position.x, player1.position.y)
+print(player2.position.x, player2.position.y)
+
+if player1.position == player2.position then
+    print("They have the same position")
+else
+    print("They do not have the same position")
+end
+
+print(player1.position)
+print(player2.position)
+
+-- add the table in the constructor before the index method
+Character.position = {
+    x = 10, y = 20, z = 30
+}
+
+Character.new = function(self, object)
+    object = object or {}
+
+    object.position = {}
+    object.position.x = Character.position.x
+    object.position.y = Character.position.y
+    object.position.z = Character.position.z
+
+    setmetatable(object, self)
+    self.__index = self
+    return object
+end
+
+player1 = Character:new()
+player2 = Character:new()
+
+player1.position.x = 0
+player2.position.y = 10
+
+print(player1.position.x, player1.position.y)
+print(player2.position.x, player2.position.y)
+
+if player1.position == player2.position then
+    print("They have the same position")
+else
+    print("They do not have the same position")
+end
+
+print(player1.position)
+print(player2.position)
+
+-- inheritance
+
+-- single inheritance
+Animal = {
+    sound = ""
+}
+
+Animal.new = function(self, object)
+    object = object or {}
+    setmetatable(object, self)
+    self.__index = self
+    return object
+end
+
+Animal.MakeSound = function(self)
+    print(self.sound)
+end
+
+-- These are going to be classes, NOT objects/instances
+Dog = Animal:new()
+Dog.sound = "woof"
+
+Cat = Animal:new()
+Cat.sound = "meow"
+Cat.angry = false
+Cat.MakeSound = function(self) -- new implementation of makesound for cats
+    if self.angry then
+        print("hiss")
+    else
+        print(self.sound)
+    end
+end
+
+animals = { Cat:new(), Dog:new(), Cat:new() }
+animals[1].angry = true
+
+
+for i, v in pairs(animals) do
+    v:MakeSound()
+end
+
+-- multiple inheritance
+-- it gets messy, try not to use it!
