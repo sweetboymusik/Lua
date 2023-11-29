@@ -212,6 +212,18 @@ print(sentence)
 print(sentence:upper())
 print(sentence:lower())
 
--- creating and loding modules
+-- avoiding parsing
 
--- creating a module
+function save(level, health, lives)
+    file = io.open("save.lua", "w")
+
+    file:write("return { \n}")
+    file:write("\tlevel = ", level, ",", "\n")
+    file:write("\thealth = ", health, ",", "\n")
+    file:write("\tlives = ", lives, ",", "\n")
+    file:write("}")
+
+    file:close()
+end
+
+save(20, 10, 2)
